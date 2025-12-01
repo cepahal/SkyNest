@@ -1,0 +1,14 @@
+{
+    "configuration": "Carriage_Height=0.1524+meter;Carriage_Width=0.5588000000000001+meter;Elevator_Height=1.2192+meter;Elevator_Width=0.6096+meter",
+    "documentId": "92c0a28558002254ede8c9dc",
+    "documentMicroversion": "e1acddd1ace16e6dbf10f01c",
+    "documentVersion": "05bdd922c813369d8081e58c",
+    "elementId": "b6bd44a8008018fc9779538e",
+    "fullConfiguration": "Carriage_Height=0.1524+meter;Carriage_Width=0.5588000000000001+meter;Elevator_Height=1.2192+meter;Elevator_Width=0.6096+meter",
+    "id": "MskAmdapV4gH/WqxJ",
+    "isStandardContent": false,
+    "name": "Carriage <1>",
+    "partId": "JHD",
+    "suppressed": false,
+    "type": "Part"
+}

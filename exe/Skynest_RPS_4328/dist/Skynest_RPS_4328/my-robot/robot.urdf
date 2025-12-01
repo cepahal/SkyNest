@@ -1,0 +1,253 @@
+<?xml version="1.0" ?>
+<!-- Generated using onshape-to-robot -->
+<!-- Onshape document_id: 8b5b6ea4aa5d45dd076e7ef6 -->
+<robot name="C:\Users\grant\Skynest_RPS_4328\exe\dist\Skynest_RPS_4328\my-robot">
+  <!-- Link swerve__aac1e981ec072e04fdcf02d311d393be -->
+  <link name="swerve__aac1e981ec072e04fdcf02d311d393be">
+    <inertial>
+      <origin xyz="1.38778e-17 -0.218734 0.03175" rpy="0 0 0"/>
+      <mass value="13.2658"/>
+      <inertia ixx="0.044576" ixy="0" ixz="0" iyy="0.0260324" iyz="0" izz="0.0616932"/>
+    </inertial>
+    <!-- Part weight -->
+    <visual>
+      <origin xyz="-0.06985 -0.313984 0.0635" rpy="3.14159 -0 0"/>
+      <geometry>
+        <mesh filename="package://assets\weight.stl"/>
+      </geometry>
+      <material name="weight_material">
+        <color rgba="0.980392 0.713725 0.00392157 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="-0.06985 -0.313984 0.0635" rpy="3.14159 -0 0"/>
+      <geometry>
+        <mesh filename="package://assets\weight.stl"/>
+      </geometry>
+    </collision>
+    <!-- Part generic_structure_piece__7db8c0a4a3a477c2fe3454001be9dcb5 -->
+    <visual>
+      <origin xyz="-0.27305 0.219416 0.0635" rpy="1.5708 -0 0"/>
+      <geometry>
+        <mesh filename="package://assets\generic_structure_piece__7db8c0a4a3a477c2fe3454001be9dcb5.stl"/>
+      </geometry>
+      <material name="generic_structure_piece__7db8c0a4a3a477c2fe3454001be9dcb5_material">
+        <color rgba="0.917647 0.72549 0.490196 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="-0.27305 0.219416 0.0635" rpy="1.5708 -0 0"/>
+      <geometry>
+        <mesh filename="package://assets\generic_structure_piece__7db8c0a4a3a477c2fe3454001be9dcb5.stl"/>
+      </geometry>
+    </collision>
+    <!-- Part swerve__2f06a5375ff9745c7beb3236907a4558 -->
+    <visual>
+      <origin xyz="7.35718e-18 -0.00918414 -0.06985" rpy="0 -0 0"/>
+      <geometry>
+        <mesh filename="package://assets\swerve__2f06a5375ff9745c7beb3236907a4558.stl"/>
+      </geometry>
+      <material name="swerve__2f06a5375ff9745c7beb3236907a4558_material">
+        <color rgba="0.882353 0.572549 0.478431 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="7.35718e-18 -0.00918414 -0.06985" rpy="0 -0 0"/>
+      <geometry>
+        <mesh filename="package://assets\swerve__2f06a5375ff9745c7beb3236907a4558.stl"/>
+      </geometry>
+    </collision>
+    <!-- Part horizontal_roller__fb9e0fac6f99e159a67c7bf116795558 -->
+    <visual>
+      <origin xyz="1.66533e-16 0.282128 -0.04445" rpy="2.61799 -8.32667e-17 -3.14159"/>
+      <geometry>
+        <mesh filename="package://assets\horizontal_roller__fb9e0fac6f99e159a67c7bf116795558.stl"/>
+      </geometry>
+      <material name="horizontal_roller__fb9e0fac6f99e159a67c7bf116795558_material">
+        <color rgba="0.541176 0.682353 0.839216 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="1.66533e-16 0.282128 -0.04445" rpy="2.61799 -8.32667e-17 -3.14159"/>
+      <geometry>
+        <mesh filename="package://assets\horizontal_roller__fb9e0fac6f99e159a67c7bf116795558.stl"/>
+      </geometry>
+    </collision>
+    <!-- Part generic_structure_piece__7db8c0a4a3a477c2fe3454001be9dcb5_2 -->
+    <visual>
+      <origin xyz="0.27305 0.219416 0.0635" rpy="1.5708 -0 0"/>
+      <geometry>
+        <mesh filename="package://assets\generic_structure_piece__7db8c0a4a3a477c2fe3454001be9dcb5.stl"/>
+      </geometry>
+      <material name="generic_structure_piece__7db8c0a4a3a477c2fe3454001be9dcb5_2_material">
+        <color rgba="0.917647 0.72549 0.490196 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0.27305 0.219416 0.0635" rpy="1.5708 -0 0"/>
+      <geometry>
+        <mesh filename="package://assets\generic_structure_piece__7db8c0a4a3a477c2fe3454001be9dcb5.stl"/>
+      </geometry>
+    </collision>
+    <!-- Part stage_1__484c10e432fd6bf4e16cde51157dc6f1 -->
+    <visual>
+      <origin xyz="-0.3175 -0.00918414 1.01828e-15" rpy="-1.75137e-15 8.16075e-16 1.5708"/>
+      <geometry>
+        <mesh filename="package://assets\stage_1__484c10e432fd6bf4e16cde51157dc6f1.stl"/>
+      </geometry>
+      <material name="stage_1__484c10e432fd6bf4e16cde51157dc6f1_material">
+        <color rgba="0.654902 0.584314 0.823529 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="-0.3175 -0.00918414 1.01828e-15" rpy="-1.75137e-15 8.16075e-16 1.5708"/>
+      <geometry>
+        <mesh filename="package://assets\stage_1__484c10e432fd6bf4e16cde51157dc6f1.stl"/>
+      </geometry>
+    </collision>
+    <!-- Part stage_2__484c10e432fd6bf4e16cde51157dc6f1 -->
+    <visual>
+      <origin xyz="-0.3175 -0.00918414 3.33637e-17" rpy="-1.75137e-15 2.08505e-16 1.5708"/>
+      <geometry>
+        <mesh filename="package://assets\stage_2__484c10e432fd6bf4e16cde51157dc6f1.stl"/>
+      </geometry>
+      <material name="stage_2__484c10e432fd6bf4e16cde51157dc6f1_material">
+        <color rgba="0.654902 0.584314 0.823529 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="-0.3175 -0.00918414 3.33637e-17" rpy="-1.75137e-15 2.08505e-16 1.5708"/>
+      <geometry>
+        <mesh filename="package://assets\stage_2__484c10e432fd6bf4e16cde51157dc6f1.stl"/>
+      </geometry>
+    </collision>
+    <!-- Part stage_1__484c10e432fd6bf4e16cde51157dc6f1_2 -->
+    <visual>
+      <origin xyz="0.3175 -0.00918414 9.53231e-16" rpy="4.66044e-16 8.16075e-16 1.5708"/>
+      <geometry>
+        <mesh filename="package://assets\stage_1__484c10e432fd6bf4e16cde51157dc6f1.stl"/>
+      </geometry>
+      <material name="stage_1__484c10e432fd6bf4e16cde51157dc6f1_2_material">
+        <color rgba="0.654902 0.584314 0.823529 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0.3175 -0.00918414 9.53231e-16" rpy="4.66044e-16 8.16075e-16 1.5708"/>
+      <geometry>
+        <mesh filename="package://assets\stage_1__484c10e432fd6bf4e16cde51157dc6f1.stl"/>
+      </geometry>
+    </collision>
+    <!-- Part stage_2__484c10e432fd6bf4e16cde51157dc6f1_2 -->
+    <visual>
+      <origin xyz="0.3175 -0.00918414 -3.33637e-17" rpy="-1.75137e-15 2.08505e-16 1.5708"/>
+      <geometry>
+        <mesh filename="package://assets\stage_2__484c10e432fd6bf4e16cde51157dc6f1.stl"/>
+      </geometry>
+      <material name="stage_2__484c10e432fd6bf4e16cde51157dc6f1_2_material">
+        <color rgba="0.654902 0.584314 0.823529 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0.3175 -0.00918414 -3.33637e-17" rpy="-1.75137e-15 2.08505e-16 1.5708"/>
+      <geometry>
+        <mesh filename="package://assets\stage_2__484c10e432fd6bf4e16cde51157dc6f1.stl"/>
+      </geometry>
+    </collision>
+  </link>
+  <!-- Link arm_segment__f3d596783f9f1a53aca529c3683d15b7 -->
+  <link name="arm_segment__f3d596783f9f1a53aca529c3683d15b7">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="1e-09"/>
+      <inertia ixx="1e-09" ixy="0" ixz="0" iyy="1e-09" iyz="0" izz="1e-09"/>
+    </inertial>
+    <!-- Part arm_segment__f3d596783f9f1a53aca529c3683d15b7 -->
+    <visual>
+      <origin xyz="-0.254 -2.77556e-17 -0.0127" rpy="-1.5708 -1.5708 0"/>
+      <geometry>
+        <mesh filename="package://assets\arm_segment__f3d596783f9f1a53aca529c3683d15b7.stl"/>
+      </geometry>
+      <material name="arm_segment__f3d596783f9f1a53aca529c3683d15b7_material">
+        <color rgba="0.917647 0.72549 0.490196 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="-0.254 -2.77556e-17 -0.0127" rpy="-1.5708 -1.5708 0"/>
+      <geometry>
+        <mesh filename="package://assets\arm_segment__f3d596783f9f1a53aca529c3683d15b7.stl"/>
+      </geometry>
+    </collision>
+    <!-- Part configurable_ball_tunnel__94c8332c3d2a75d8e1ad241703f6312b -->
+    <visual>
+      <origin xyz="-0.314097 -0.0381 -0.26035" rpy="-3.14159 -1.5708 0"/>
+      <geometry>
+        <mesh filename="package://assets\configurable_ball_tunnel__94c8332c3d2a75d8e1ad241703f6312b.stl"/>
+      </geometry>
+      <material name="configurable_ball_tunnel__94c8332c3d2a75d8e1ad241703f6312b_material">
+        <color rgba="0.654902 0.823529 0.576471 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="-0.314097 -0.0381 -0.26035" rpy="-3.14159 -1.5708 0"/>
+      <geometry>
+        <mesh filename="package://assets\configurable_ball_tunnel__94c8332c3d2a75d8e1ad241703f6312b.stl"/>
+      </geometry>
+    </collision>
+    <!-- Part arm_segment__f3d596783f9f1a53aca529c3683d15b7_2 -->
+    <visual>
+      <origin xyz="-0.254 5.55112e-17 -0.50165" rpy="-1.5708 -1.5708 0"/>
+      <geometry>
+        <mesh filename="package://assets\arm_segment__f3d596783f9f1a53aca529c3683d15b7.stl"/>
+      </geometry>
+      <material name="arm_segment__f3d596783f9f1a53aca529c3683d15b7_2_material">
+        <color rgba="0.917647 0.72549 0.490196 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="-0.254 5.55112e-17 -0.50165" rpy="-1.5708 -1.5708 0"/>
+      <geometry>
+        <mesh filename="package://assets\arm_segment__f3d596783f9f1a53aca529c3683d15b7.stl"/>
+      </geometry>
+    </collision>
+    <!-- Part horizontal_roller__63510fac1804c212f223d5df13e26088 -->
+    <visual>
+      <origin xyz="-0.508 1.52656e-15 -0.257175" rpy="3.14159 1.5708 0"/>
+      <geometry>
+        <mesh filename="package://assets\horizontal_roller__63510fac1804c212f223d5df13e26088.stl"/>
+      </geometry>
+      <material name="horizontal_roller__63510fac1804c212f223d5df13e26088_material">
+        <color rgba="0.541176 0.682353 0.839216 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="-0.508 1.52656e-15 -0.257175" rpy="3.14159 1.5708 0"/>
+      <geometry>
+        <mesh filename="package://assets\horizontal_roller__63510fac1804c212f223d5df13e26088.stl"/>
+      </geometry>
+    </collision>
+    <!-- Part horizontal_roller__9351daac2b97eade60ab45f49190e71a -->
+    <visual>
+      <origin xyz="-0.127 -0.1524 -0.257175" rpy="2.24932e-15 -1.5708 0"/>
+      <geometry>
+        <mesh filename="package://assets\horizontal_roller__9351daac2b97eade60ab45f49190e71a.stl"/>
+      </geometry>
+      <material name="horizontal_roller__9351daac2b97eade60ab45f49190e71a_material">
+        <color rgba="0.541176 0.682353 0.839216 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="-0.127 -0.1524 -0.257175" rpy="2.24932e-15 -1.5708 0"/>
+      <geometry>
+        <mesh filename="package://assets\horizontal_roller__9351daac2b97eade60ab45f49190e71a.stl"/>
+      </geometry>
+    </collision>
+  </link>
+  <!-- Joint from swerve__aac1e981ec072e04fdcf02d311d393be to arm_segment__f3d596783f9f1a53aca529c3683d15b7 -->
+  <joint name="FRC_intake" type="revolute">
+    <origin xyz="0.26035 0.219416 0.127" rpy="1.5708 0.504957 1.5708"/>
+    <parent link="swerve__aac1e981ec072e04fdcf02d311d393be"/>
+    <child link="arm_segment__f3d596783f9f1a53aca529c3683d15b7"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="10" velocity="10" lower="-3.141592653589793" upper="3.141592653589793"/>
+  </joint>
+</robot>
