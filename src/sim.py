@@ -7,10 +7,148 @@ import pandas as pd
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QPushButton,
     QFileDialog, QTableWidget, QTableWidgetItem, QLabel, QHBoxLayout,
-    QMessageBox, QDialog, QSlider, QFormLayout, QDoubleSpinBox, QGroupBox
+    QMessageBox, QDialog, QSlider, QFormLayout, QDoubleSpinBox, QGroupBox,
+    QGridLayout
 )
 from PyQt5.QtCore import Qt, QTimer, QProcess
 
+# -------------------------
+# Field Adjust Dialog
+# -------------------------
+class FieldAdjustDialog(QDialog):
+    """
+    Dialog that appears immediately after loading a field.
+    Lets user rotate X/Y/Z in ±90° steps and set a uniform scale (percent).
+    Live-updates the field preview by calling parent.apply_field_transform.
+    """
+
+    def __init__(self, parent, mesh_path, initial_scale=1.0, initial_euler=(0.0,0.0,0.0), base_position=(0,0,0.875)):
+        super().__init__(parent)
+        self.parent = parent
+        self.mesh_path = mesh_path
+        self.setWindowTitle("Adjust Field Orientation & Scale")
+        self.resize(420, 260)
+
+        self.euler = list(initial_euler)  # degrees [rx, ry, rz]
+        self.scale = initial_scale
+        self.base_position = base_position
+
+        layout = QVBoxLayout(self)
+
+        # Grid for rotation buttons and current angles
+        grid = QGridLayout()
+        grid.addWidget(QLabel("<b>Rotate ±30°</b>"), 0, 0, 1, 3)
+
+        # X rotation row
+        grid.addWidget(QLabel(f"<span style='color:#3498db;'>X:</span>"), 1, 0)
+        self.btn_x_neg = QPushButton("⟲ -30°")
+        self.btn_x_pos = QPushButton("30° ⟳")
+        self.lbl_x = QLabel(f"{self.euler[0]:.0f}°")
+        grid.addWidget(self.btn_x_neg, 1, 1)
+        grid.addWidget(self.btn_x_pos, 1, 2)
+        grid.addWidget(self.lbl_x, 1, 3)
+
+        # Y rotation row
+        grid.addWidget(QLabel(f"<span style='color:#2ecc71;'>Y:</span>"), 2, 0)
+        self.btn_y_neg = QPushButton("⟲ -30°")
+        self.btn_y_pos = QPushButton("30° ⟳")
+        self.lbl_y = QLabel(f"{self.euler[1]:.0f}°")
+        grid.addWidget(self.btn_y_neg, 2, 1)
+        grid.addWidget(self.btn_y_pos, 2, 2)
+        grid.addWidget(self.lbl_y, 2, 3)
+
+        # Z rotation row
+        grid.addWidget(QLabel(f"<span style='color:#e74c3c;'>Z:</span>"), 3, 0)
+        self.btn_z_neg = QPushButton("⟲ -30°")
+        self.btn_z_pos = QPushButton("30° ⟳")
+        self.lbl_z = QLabel(f"{self.euler[2]:.0f}°")
+        grid.addWidget(self.btn_z_neg, 3, 1)
+        grid.addWidget(self.btn_z_pos, 3, 2)
+        grid.addWidget(self.lbl_z, 3, 3)
+
+        layout.addLayout(grid)
+
+        # Scale control (uniform)
+        scale_box = QGroupBox("Uniform Scale (percent)")
+        s_layout = QVBoxLayout()
+        self.scale_spin = QDoubleSpinBox()
+        self.scale_spin.setRange(.0001, 1000.0)   # 1% to 1000%
+        self.scale_spin.setSuffix("%")
+        self.scale_spin.setDecimals(1)
+        self.scale_spin.setSingleStep(1.0)
+        self.scale_spin.setValue(self.scale * 100.0)
+        s_layout.addWidget(self.scale_spin)
+        scale_box.setLayout(s_layout)
+        layout.addWidget(scale_box)
+
+        # Buttons
+        btn_row = QHBoxLayout()
+        self.apply_btn = QPushButton("Apply")
+        self.reset_btn = QPushButton("Reset")
+        self.done_btn = QPushButton("Done")
+        btn_row.addWidget(self.apply_btn)
+        btn_row.addWidget(self.reset_btn)
+        btn_row.addWidget(self.done_btn)
+        layout.addLayout(btn_row)
+
+        # Connect signals
+        self.btn_x_neg.clicked.connect(lambda: self.rotate_axis(0, -45))
+        self.btn_x_pos.clicked.connect(lambda: self.rotate_axis(0, 45))
+        self.btn_y_neg.clicked.connect(lambda: self.rotate_axis(1, -45))
+        self.btn_y_pos.clicked.connect(lambda: self.rotate_axis(1, 45))
+        self.btn_z_neg.clicked.connect(lambda: self.rotate_axis(2, -45))
+        self.btn_z_pos.clicked.connect(lambda: self.rotate_axis(2, 45))
+
+        self.scale_spin.valueChanged.connect(self.scale_changed)
+        self.apply_btn.clicked.connect(self.apply_clicked)
+        self.reset_btn.clicked.connect(self.reset_clicked)
+        self.done_btn.clicked.connect(self.accept)
+
+        # initial live preview
+        self.apply_transform()
+
+    def rotate_axis(self, idx, deg):
+        self.euler[idx] = (self.euler[idx] + deg) % 360
+        self.update_labels()
+        # Live preview
+        self.apply_transform()
+
+    def update_labels(self):
+        self.lbl_x.setText(f"{self.euler[0]:.0f}°")
+        self.lbl_y.setText(f"{self.euler[1]:.0f}°")
+        self.lbl_z.setText(f"{self.euler[2]:.0f}°")
+
+    def scale_changed(self, val):
+        self.scale = val / 100.0
+        # live preview
+        self.apply_transform()
+
+    def apply_transform(self):
+        """Apply the transform to the parent field (live preview)."""
+        if hasattr(self.parent, "apply_field_transform"):
+            self.parent.apply_field_transform(
+                self.mesh_path, 
+                self.scale, 
+                tuple(self.euler), 
+                base_position=self.base_position
+            )
+
+    def apply_clicked(self):
+        # same as apply_transform but keep for UI clarity
+        self.apply_transform()
+
+    def reset_clicked(self):
+        # Reset to defaults
+        self.euler = [0.0, 0.0, 0.0]
+        self.scale = 1.0
+        self.scale_spin.setValue(100.0)
+        self.update_labels()
+        self.apply_transform()
+
+
+# -------------------------
+# Existing classes (GamePieceConfigDialog adjusted)
+# -------------------------
 class GamePieceConfigDialog(QDialog):
     def __init__(self, parent, robot_id, piece_id, mesh_path):
         super().__init__(parent)
@@ -28,7 +166,7 @@ class GamePieceConfigDialog(QDialog):
         self.current_pos = [0.0, 0.0, 0.5]
         self.current_rpy = [0.0, 0.0, 0.0]
 
-        # NEW: Track scale (1.0 = 100%)
+        # Track scale (1.0 = 100%)
         self.current_scale = 1.0
 
         layout = QVBoxLayout()
@@ -110,19 +248,22 @@ class GamePieceConfigDialog(QDialog):
 
     # --- Update Game Piece Scale ---
     def update_scale(self, value):
-        self.current_scale = value * .0000127
+        # Interpret percent -> scale factor; keep existing constant for the piece's units
+        self.current_scale = value / 100.0
         self.scale_label.setText(f"Scale: {value}%")
 
-        # You MUST have selected a game piece first
-        if not hasattr(self, "mesh_path"):
-            return
-
-        # Remove old body
-        p.removeBody(self.piece_id)
+        # Recreate the piece body (safe) using parent's robot pos as spawn
+        try:
+            # remove existing piece id if present
+            if self.piece_id is not None:
+                p.removeBody(self.piece_id)
+        except Exception:
+            pass
 
         scale = [self.current_scale] * 3
 
         # Rebuild from original stored STL path
+        # NOTE: Game piece scaling is inherently less problematic as they are typically simple meshes.
         new_visual = p.createVisualShape(
             p.GEOM_MESH,
             fileName=self.mesh_path,
@@ -135,11 +276,10 @@ class GamePieceConfigDialog(QDialog):
             radius=0.1 * self.current_scale   # optional: scale collision too
         )
 
-        # Respawn the game piece near the robot
         start_pos, _ = p.getBasePositionAndOrientation(self.robot_id)
         spawn_pos = [start_pos[0], start_pos[1], start_pos[2] + 0.5]
 
-        self.game_piece_id = p.createMultiBody(
+        self.piece_id = p.createMultiBody(
             baseMass=0,
             baseCollisionShapeIndex=new_collision,
             baseVisualShapeIndex=new_visual,
@@ -166,7 +306,10 @@ class GamePieceConfigDialog(QDialog):
             self.current_pos, offset_orn
         )
 
-        p.resetBasePositionAndOrientation(self.piece_id, final_pos, final_orn)
+        try:
+            p.resetBasePositionAndOrientation(self.piece_id, final_pos, final_orn)
+        except Exception:
+            pass
 
     def save_intake(self):
         self.intake_offset["pos"] = self.current_pos
@@ -177,6 +320,9 @@ class GamePieceConfigDialog(QDialog):
         self.outtake_offset["orn"] = self.current_rpy
 
 
+# -------------------------
+# View Cube (unchanged)
+# -------------------------
 class ViewCubeWindow(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -237,11 +383,15 @@ class ViewCubeWindow(QWidget):
 
         p.resetDebugVisualizerCamera(cameraDistance=dist, cameraYaw=yaw, cameraPitch=pitch, cameraTargetPosition=target)
 
+
+# -------------------------
+# Main Simulator Class
+# -------------------------
 class FRCSimulator(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Project Skynest RPS - Team 4328 (Grant Andrews)")
-        self.resize(600, 400)
+        self.resize(700, 400)
 
         self.layout = QVBoxLayout()
 
@@ -253,7 +403,7 @@ class FRCSimulator(QWidget):
         # Buttons
         self.load_field_btn = QPushButton("Load Field STL")
         self.load_robot_btn = QPushButton("Load Robot URDF")
-        self.select_piece_btn = QPushButton("Select Game Piece") 
+        self.select_piece_btn = QPushButton("Select Game Piece")
         self.run_sim_btn = QPushButton("Run Simulation")
 
         self.load_field_btn.clicked.connect(self.load_field)
@@ -262,7 +412,7 @@ class FRCSimulator(QWidget):
         self.import_process = QProcess(self)
         self.import_process.finished.connect(self.on_import_finished)
 
-        self.select_piece_btn.clicked.connect(self.select_game_piece) 
+        self.select_piece_btn.clicked.connect(self.select_game_piece)
         self.run_sim_btn.clicked.connect(self.run_simulation)
 
         # Timeline table
@@ -296,19 +446,24 @@ class FRCSimulator(QWidget):
 
         self.robot_id = None
         self.field_id = None
+        self.field_mesh_path = None
+        self.field_scale = 1.0
+        self.field_euler = (0.0, 0.0, 0.0)
+        self.field_base_position = [0,0,0.875]
+
         self.game_piece_id = None
-        
+
         # Game Piece State
-        self.game_piece_cid = None 
+        self.game_piece_cid = None
         self.intake_config = {"pos": [0,0,0], "orn": [0,0,0]}
         self.outtake_config = {"pos": [0,0,0], "orn": [0,0,0]}
-        
+
         self.joint_map = {}
         self.joint_default_positions = {}
-        
+
         # Process for importer
         self.import_process = None
-        
+
         self.view_cube_window = ViewCubeWindow()
 
     def show_view_cube(self):
@@ -318,18 +473,114 @@ class FRCSimulator(QWidget):
         if row == self.timeline.rowCount() - 1:
             self.timeline.insertRow(self.timeline.rowCount())
 
+    # -------------------------
+    # Field loading + apply transform
+    # -------------------------
     def load_field(self):
-        path, _ = QFileDialog.getOpenFileName(self, "Load Field STL", "", "STL Files (*.stl)")
-        if path:
-            if self.field_id: p.removeBody(self.field_id)
-            visual = p.createVisualShape(p.GEOM_MESH, fileName=path, meshScale=[1]*3, rgbaColor=[0.65, .65, 0.65, 1])
-            collision = p.createCollisionShape(p.GEOM_MESH, fileName=path, meshScale=[0,0,0])
-            self.field_id = p.createMultiBody(baseMass=0, baseCollisionShapeIndex=collision, baseVisualShapeIndex=visual, basePosition=[0, 0, .875])
-            self.field_label.setText(f"Field: {os.path.basename(path)}")
-            self.show_view_cube()
+        path, _ = QFileDialog.getOpenFileName(self, "Select Field STL", "", "STL Files (*.stl)")
+        if not path:
+            return
 
-    # --- LOADING ROBOT ---
-    
+        self.field_mesh_path = path
+
+        # Open adjust dialog FIRST
+        dlg = FieldAdjustDialog(self, path)
+        dlg.exec_()
+
+        self.field_label.setText(f"Field: {os.path.basename(path)}")
+
+    def apply_field_transform(self, mesh_path, scale, euler_deg, base_position=(0,0,0.875)):
+        """
+        Called live from FieldAdjustDialog.
+        Applies scale + rotation + base position by rebuilding the field.
+        """
+        # OPTIMIZATION: If ONLY moving/rotating (scale is same), avoid destroying body.
+        # This prevents resource exhaustion when dealing with a massive mesh.
+        if (self.field_id is not None and 
+            self.field_mesh_path == mesh_path and 
+            abs(self.field_scale - scale) < 1e-5):
+            
+            # Convert degrees -> radians
+            euler_rad = [x * 3.1415926 / 180.0 for x in euler_deg]
+            quat = p.getQuaternionFromEuler(euler_rad)
+            
+            # Just move the existing body (cheap)
+            p.resetBasePositionAndOrientation(self.field_id, base_position, quat)
+            
+            # Update internal state tracking
+            self.field_euler = euler_deg
+            self.field_base_position = base_position
+            return
+
+        # If scale changed or mesh path changed, we MUST recreate (The problematic step)
+        self.field_mesh_path = mesh_path
+        self.field_scale = scale
+        self.field_euler = euler_deg
+        self.field_base_position = base_position
+
+        self._create_field_body(
+            mesh_path,
+            scale,
+            euler_deg,
+            base_position
+        )
+
+    def _create_field_body(self, mesh_path, scale, euler_deg, base_position):
+        """
+        Safely removes previous field, builds a new one with correct scale+orientation.
+        Uses a simple box for collision to prevent memory exhaustion on scaling high-poly meshes.
+        
+        NOTE: If this function fails to create the body, the input STL file is too large
+        and must be decimated (reduced in face count) externally.
+        """
+
+        # Delete old field - safely manage the ID
+        if self.field_id is not None:
+            try:
+                p.removeBody(self.field_id)
+            except Exception:
+                pass
+            self.field_id = None 
+
+        # Convert degrees → radians → quaternion
+        euler_rad = [x * 3.1415926 / 180.0 for x in euler_deg]
+        quat = p.getQuaternionFromEuler(euler_rad)
+
+        mesh_scale = [scale, scale, scale]
+
+        try:
+            # 1. VISUAL SHAPE (This is the costly step if the mesh is too large)
+            visual = p.createVisualShape(
+                shapeType=p.GEOM_MESH,
+                fileName=mesh_path,
+                meshScale=mesh_scale,
+                rgbaColor=[.6, .6, .57, 1]
+            )
+
+            # 2. COLLISION SHAPE (Using a simple box proxy for collision/physics calculation)
+            # FRC field dimensions are roughly 16.4m x 8.2m. We use a thin box.
+            collision = p.createCollisionShape(
+                shapeType=p.GEOM_BOX, 
+                halfExtents=[16.4 / 2 * scale, 8.2 / 2 * scale, 0.05 * scale]
+            )
+
+            if visual == -1 or collision == -1:
+                 raise ValueError("Failed to create visual or collision shape index.")
+            
+            self.field_id = p.createMultiBody(
+                baseMass=0, # Static body
+                baseVisualShapeIndex=visual,
+                baseCollisionShapeIndex=collision,
+                basePosition=base_position,
+                baseOrientation=quat
+            )
+        except Exception as e:
+            print(f"Error creating field body. This often means the STL file is too large (>200k faces) or improperly formatted: {e}")
+            self.field_id = None
+
+    # -------------------------
+    # ROBOT loading logic (unchanged)
+    # -------------------------
     def load_robot(self):
         self.status_label.setText("Launching Onshape importer...")
         QApplication.processEvents()
@@ -337,6 +588,8 @@ class FRCSimulator(QWidget):
         self.import_process = QProcess(self)
         self.import_process.finished.connect(self.on_import_finished)
 
+        # Launch the importer (user's exe) — keep prior behavior
+        # If you bundle importer as a script inside the dist, call via sys.executable + resource path instead.
         self.import_process.start("onshape-to-robot-importer.exe")
 
     def on_import_finished(self):
@@ -344,18 +597,17 @@ class FRCSimulator(QWidget):
         QApplication.processEvents()
 
         urdf_path, _ = QFileDialog.getOpenFileName(
-            self, 
-            "Select a URDF file", 
-            "", 
+            self,
+            "Select a URDF file",
+            "",
             "URDF Files (*.urdf)"
         )
 
-        if urdf_path is None:
+        if not urdf_path:
             self.status_label.setText("Error: No URDF found.")
             return
 
         self.load_urdf_from_path(urdf_path)
-
 
     def load_urdf_from_path(self, path):
         self.status_label.setText(f"Loading {path}...")
@@ -384,21 +636,20 @@ class FRCSimulator(QWidget):
         for i in range(p.getNumJoints(self.robot_id)):
             info = p.getJointInfo(self.robot_id, i)
             name = info[1].decode("utf-8")
-            # FRC_* or dof_FRC_* cleanup
             cleaned = name.replace("dof_", "").replace("FRC_", "")
             self.joint_map[cleaned] = i
             self.joint_default_positions[i] = p.getJointState(self.robot_id, i)[0]
     
     def set_default_motor_control(self):
-        # Apply high-force position control to act as a strong brake/servo, 
-        # ensuring joints hold their position relative to the base, even when the base moves.
         for joint_idx, target_pos in self.joint_default_positions.items():
             p.setJointMotorControl2(
                 self.robot_id, joint_idx, controlMode=p.POSITION_CONTROL,
                 targetPosition=target_pos, force=1000, positionGain=0.9
             )
 
-    # --- GAME PIECE LOGIC ---
+    # -------------------------
+    # GAME PIECE LOGIC (unchanged)
+    # -------------------------
     def select_game_piece(self):
         if not self.robot_id:
             QMessageBox.warning(self, "Error", "Please load a robot first.")
@@ -475,6 +726,9 @@ class FRCSimulator(QWidget):
             parentFrameOrientation=orn_offset
         )
 
+    # -------------------------
+    # Reset / Simulation (unchanged)
+    # -------------------------
     def reset_joints(self):
         for joint_idx, default_pos in self.joint_default_positions.items():
             p.resetJointState(self.robot_id, joint_idx, default_pos)
@@ -583,6 +837,10 @@ class FRCSimulator(QWidget):
         item = self.timeline.item(row, col)
         return item.text() if item else ""
 
+
+# -------------------------
+# App entrypoint
+# -------------------------
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     win = FRCSimulator()
