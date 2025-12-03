@@ -1,6 +1,10 @@
 # SkyNest
 Project SkyNest Rapid Prototyping Simulator (RPS) is a way to quickly create and visualize robot ideas for group events, primarily FRC kickoff.
 
+Using a low-poly CAD Library in Onshape is recommended, but not required. The dedicated library is based off of KrayonCAD and is linked below:
+
+https://cad.onshape.com/documents/92c0a28558002254ede8c9dc/w/44650e4878bd1584808b443b/e/d20596289b639cd0447e3efd
+
 
 ****USAGE INSTRUCTIONS**** 
 
@@ -8,7 +12,9 @@ Project SkyNest Rapid Prototyping Simulator (RPS) is a way to quickly create and
 
 * Fields should be decimated as much as possible to not put strain on the Pybullet renderer. (<500k faces, preferably 100k)
 
-* Label each joint with "dof_FRC_" then the name for the system to recognize the joint.
+* Label each joint with "dof_FRC_" then name it (e.g. dof_FRC_elevator) for the system to recognize the joint.
+
+* The converter will NOT convert your file if any joints are not labeled! If it isn't a slider/revolute mate, it's best to convert it to a fastened mate to avoid errors.
 
 
 Available Actions - [move,rotate,lift,intake,outtake]
