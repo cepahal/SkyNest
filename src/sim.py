@@ -11,7 +11,7 @@ from PyQt5.QtWidgets import (
     QGridLayout
 )
 from PyQt5.QtCore import Qt, QTimer, QProcess
-
+from pathlib import Path
 # -------------------------
 # Field Adjust Dialog
 # -------------------------
@@ -555,18 +555,25 @@ class FRCSimulator(QWidget):
             self.field_id = None
 
     # -------------------------
-    # ROBOT loading logic (unchanged)
+    # ROBOT loading logic
     # -------------------------
     def load_robot(self):
         self.status_label.setText("Launching Onshape importer...")
         QApplication.processEvents()
+
+        if hasattr(sys, 'frozen'):
+            exe_dir = Path(sys.executable).parent
+        else:
+            exe_dir = Path(__file__).parent
+
+        importer_exe = exe_dir.parent / "onshape-to-robot-importer" / "onshape-to-robot-importer.exe"
 
         self.import_process = QProcess(self)
         self.import_process.finished.connect(self.on_import_finished)
 
         # Launch the importer (user's exe) — keep prior behavior
         # If you bundle importer as a script inside the dist, call via sys.executable + resource path instead.
-        self.import_process.start("onshape-to-robot-importer.exe")
+        self.import_process.start(str(importer_exe))
 
     def on_import_finished(self):
         self.status_label.setText("Importer finished. Searching for URDF...")
