@@ -26,8 +26,8 @@ class FieldAdjustDialog(QDialog):
         super().__init__(parent)
         self.parent = parent
         self.mesh_path = mesh_path
-        self.setWindowTitle("Adjust Field Orientation & Scale")
-        self.resize(420, 260)
+        self.setWindowTitle("Adjust Field Orientation")
+        self.resize(420, 200)
 
         self.euler = list(initial_euler)  # degrees [rx, ry, rz]
         self.scale = initial_scale
@@ -68,19 +68,6 @@ class FieldAdjustDialog(QDialog):
 
         layout.addLayout(grid)
 
-        # Scale control (uniform)
-        scale_box = QGroupBox("Uniform Scale (percent)")
-        s_layout = QVBoxLayout()
-        self.scale_spin = QDoubleSpinBox()
-        self.scale_spin.setRange(.0001, 1000.0)   # 1% to 1000%
-        self.scale_spin.setSuffix("%")
-        self.scale_spin.setDecimals(1)
-        self.scale_spin.setSingleStep(1.0)
-        self.scale_spin.setValue(self.scale * 100.0)
-        s_layout.addWidget(self.scale_spin)
-        scale_box.setLayout(s_layout)
-        layout.addWidget(scale_box)
-
         # Buttons
         btn_row = QHBoxLayout()
         self.apply_btn = QPushButton("Apply")
@@ -99,7 +86,6 @@ class FieldAdjustDialog(QDialog):
         self.btn_z_neg.clicked.connect(lambda: self.rotate_axis(2, -45))
         self.btn_z_pos.clicked.connect(lambda: self.rotate_axis(2, 45))
 
-        self.scale_spin.valueChanged.connect(self.scale_changed)
         self.apply_btn.clicked.connect(self.apply_clicked)
         self.reset_btn.clicked.connect(self.reset_clicked)
         self.done_btn.clicked.connect(self.accept)
@@ -118,17 +104,11 @@ class FieldAdjustDialog(QDialog):
         self.lbl_y.setText(f"{self.euler[1]:.0f}°")
         self.lbl_z.setText(f"{self.euler[2]:.0f}°")
 
-    def scale_changed(self, val):
-        self.scale = val / 100.0
-        # live preview
-        self.apply_transform()
-
     def apply_transform(self):
         """Apply the transform to the parent field (live preview)."""
         if hasattr(self.parent, "apply_field_transform"):
             self.parent.apply_field_transform(
                 self.mesh_path, 
-                self.scale, 
                 tuple(self.euler), 
                 base_position=self.base_position
             )
@@ -141,7 +121,6 @@ class FieldAdjustDialog(QDialog):
         # Reset to defaults
         self.euler = [0.0, 0.0, 0.0]
         self.scale = 1.0
-        self.scale_spin.setValue(100.0)
         self.update_labels()
         self.apply_transform()
 
@@ -489,7 +468,7 @@ class FRCSimulator(QWidget):
 
         self.field_label.setText(f"Field: {os.path.basename(path)}")
 
-    def apply_field_transform(self, mesh_path, scale, euler_deg, base_position=(0,0,0.875)):
+    def apply_field_transform(self, mesh_path, euler_deg, base_position=(0,0,0.875)):
         """
         Called live from FieldAdjustDialog.
         Applies scale + rotation + base position by rebuilding the field.
@@ -497,8 +476,7 @@ class FRCSimulator(QWidget):
         # OPTIMIZATION: If ONLY moving/rotating (scale is same), avoid destroying body.
         # This prevents resource exhaustion when dealing with a massive mesh.
         if (self.field_id is not None and 
-            self.field_mesh_path == mesh_path and 
-            abs(self.field_scale - scale) < 1e-5):
+            self.field_mesh_path == mesh_path):
             
             # Convert degrees -> radians
             euler_rad = [x * 3.1415926 / 180.0 for x in euler_deg]
@@ -514,18 +492,16 @@ class FRCSimulator(QWidget):
 
         # If scale changed or mesh path changed, we MUST recreate (The problematic step)
         self.field_mesh_path = mesh_path
-        self.field_scale = scale
         self.field_euler = euler_deg
         self.field_base_position = base_position
 
         self._create_field_body(
             mesh_path,
-            scale,
             euler_deg,
             base_position
         )
 
-    def _create_field_body(self, mesh_path, scale, euler_deg, base_position):
+    def _create_field_body(self, mesh_path, euler_deg, base_position):
         """
         Safely removes previous field, builds a new one with correct scale+orientation.
         Uses a simple box for collision to prevent memory exhaustion on scaling high-poly meshes.
@@ -546,7 +522,7 @@ class FRCSimulator(QWidget):
         euler_rad = [x * 3.1415926 / 180.0 for x in euler_deg]
         quat = p.getQuaternionFromEuler(euler_rad)
 
-        mesh_scale = [scale, scale, scale]
+        mesh_scale = [1, 1, 1]
 
         try:
             # 1. VISUAL SHAPE (This is the costly step if the mesh is too large)
@@ -561,7 +537,7 @@ class FRCSimulator(QWidget):
             # FRC field dimensions are roughly 16.4m x 8.2m. We use a thin box.
             collision = p.createCollisionShape(
                 shapeType=p.GEOM_BOX, 
-                halfExtents=[16.4 / 2 * scale, 8.2 / 2 * scale, 0.05 * scale]
+                halfExtents=[16.4 / 2, 8.2 / 2, 0.05]
             )
 
             if visual == -1 or collision == -1:

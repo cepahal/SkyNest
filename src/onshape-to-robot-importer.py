@@ -11,6 +11,22 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtCore import Qt, QThread, pyqtSignal, QPropertyAnimation, QEasingCurve, QPoint
 from PyQt5.QtGui import QColor, QFont, QIcon
 
+def get_onshape_to_robot_executable():
+    # When running from PyInstaller, the script is inside _MEIPASS
+    if hasattr(sys, "_MEIPASS"):
+        exe_name = "onshape-to-robot.exe" if os.name == "nt" else "onshape-to-robot"
+        bundled_path = os.path.join(sys._MEIPASS, exe_name)
+        if os.path.exists(bundled_path):
+            return bundled_path
+
+    # Fallback: try same directory as executable
+    local_path = os.path.join(os.path.dirname(sys.executable), "onshape-to-robot.exe")
+    if os.path.exists(local_path):
+        return local_path
+
+    # Last fallback: PATH
+    return "onshape-to-robot.exe" if os.name == "nt" else "onshape-to-robot"
+
 # --- STYLING ---
 STYLESHEET = """
 QMainWindow {
@@ -154,11 +170,7 @@ class WorkerThread(QThread):
                 script_name # Fallback to PATH
             ]
             
-            cmd_executable = script_name
-            for path in possible_paths:
-                if os.path.exists(path) and os.path.isfile(path):
-                    cmd_executable = path
-                    break
+            cmd_executable = get_onshape_to_robot_executable()
             
             self.log_signal.emit(f"   Using command: {cmd_executable}")
             
