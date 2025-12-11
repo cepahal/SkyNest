@@ -28,7 +28,7 @@ class FieldAdjustDialog(QDialog):
         self.mesh_path = mesh_path
         self.setWindowTitle("Adjust Field Orientation")
         self.resize(420, 200)
-
+        self.move(1200,600)
         self.euler = list(initial_euler)  # degrees [rx, ry, rz]
         self.scale = initial_scale
         self.base_position = base_position
@@ -136,7 +136,7 @@ class GamePieceConfigDialog(QDialog):
         self.robot_id = robot_id
         self.piece_id = piece_id
         self.mesh_path = mesh_path
-        
+        self.move(1200,600)
         # Default Offsets
         self.intake_offset = {"pos": [0, 0, 0.5], "orn": [0, 0, 0]}
         self.outtake_offset = {"pos": [0, 0, 0.5], "orn": [0, 0, 0]}
@@ -306,8 +306,8 @@ class ViewCubeWindow(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("View")
-        self.setFixedSize(200, 200)
-
+        self.setFixedSize(225, 225)
+        self.move(1600,500)
         layout = QVBoxLayout()
 
         self.up_btn = QPushButton("↑")
@@ -371,7 +371,7 @@ class FRCSimulator(QWidget):
         super().__init__()
         self.setWindowTitle("Project Skynest RPS - Team 4328 (Grant Andrews)")
         self.resize(700, 400)
-
+        self.move(1200,50)
         self.layout = QVBoxLayout()
 
         # Labels
@@ -429,7 +429,7 @@ class FRCSimulator(QWidget):
         self.field_scale = 1.0
         self.field_euler = (0.0, 0.0, 0.0)
         self.field_base_position = [0,0,0.875]
-
+        
         self.game_piece_id = None
 
         # Game Piece State
@@ -465,7 +465,7 @@ class FRCSimulator(QWidget):
         # Open adjust dialog FIRST
         dlg = FieldAdjustDialog(self, path)
         dlg.exec_()
-
+        self.show_view_cube()
         self.field_label.setText(f"Field: {os.path.basename(path)}")
 
     def apply_field_transform(self, mesh_path, euler_deg, base_position=(0,0,0.875)):
@@ -828,19 +828,109 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     win = FRCSimulator()
 
-    dark_style = """
-        QWidget { background-color: #1e1e1e; color: #f1f1f1; font-size: 14px; }
-        QPushButton { background-color: #f1c40f; color: #1e1e1e; border-radius: 6px; padding: 5px 10px; font-weight: bold; }
-        QPushButton:hover { background-color: #ffd700; }
-        QPushButton:disabled { background-color: #444444; color: #888888; }
-        QTableWidget { background-color: #2e2e2e; color: #ffffff; gridline-color: #f1c40f; }
-        QHeaderView::section { background-color: #2e2e2e; color: #f1c40f; padding: 4px; border: none; }
-        QLabel { color: #f1f1f1; }
-        QLabel#FieldLabel, QLabel#RobotLabel { color: #f1c40f; font-weight: bold; }
-        QGroupBox { border: 1px solid #f1c40f; margin-top: 20px; font-weight: bold; color: #f1c40f; }
-        QGroupBox::title { subcontrol-origin: margin; subcontrol-position: top center; padding: 0 3px; }
+    purple_hacker_style = """
+        QWidget {
+            background-color: #121212;
+            color: #E0E0E0;
+            font-size: 14px;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        QLabel {
+            color: #E0E0E0;
+            font-size: 14px;
+        }
+
+        QLineEdit, QSpinBox, QDoubleSpinBox {
+            background-color: #1E1E1E;
+            border: 2px solid #333333;
+            border-radius: 8px;
+            color: #FFFFFF;
+            padding: 6px;
+            selection-background-color: #BB86FC;
+        }
+        QLineEdit:focus, QSpinBox:focus, QDoubleSpinBox:focus {
+            border: 2px solid #BB86FC;
+        }
+
+        QPushButton {
+            background-color: #3700B3;
+            color: white;
+            border-radius: 8px;
+            padding: 10px;
+            font-weight: bold;
+            font-size: 15px;
+        }
+        QPushButton:hover {
+            background-color: #6200EE;
+        }
+        QPushButton:pressed {
+            background-color: #3700B3;
+        }
+        QPushButton:disabled {
+            background-color: #333333;
+            color: #888888;
+        }
+
+        QTableWidget {
+            background-color: #1A1A1A;
+            color: #FFFFFF;
+            gridline-color: #6200EE;
+            selection-background-color: #2A174C;
+            selection-color: #ffffff;
+        }
+
+        QHeaderView::section {
+            background-color: #1E1E1E;
+            color: #BB86FC;
+            padding: 6px;
+            border: none;
+            font-weight: bold;
+        }
+        
+        QTableCornerButton::section 
+        {
+            background-color: #1A1A1A;   /* match table bg */
+            border: none;
+        }
+
+        QGroupBox {
+            border: 1px solid #6200EE;
+            border-radius: 8px;
+            margin-top: 16px;
+            padding: 10px;
+            font-weight: bold;
+            color: #BB86FC;
+        }
+        QGroupBox::title {
+            subcontrol-origin: margin;
+            subcontrol-position: top center;
+            padding: 0 6px;
+        }
+
+        QSlider::groove:horizontal {
+            border: 1px solid #444;
+            height: 6px;
+            background: #1E1E1E;
+            border-radius: 3px;
+        }
+        QSlider::handle:horizontal {
+            background: #BB86FC;
+            width: 14px;
+            height: 14px;
+            margin: -5px 0;
+            border-radius: 7px;
+        }
+        QSlider::handle:horizontal:hover {
+            background: #D6A5FF;
+        }
+
+        QDialog {
+            background-color: #121212;
+        }
     """
-    app.setStyleSheet(dark_style)
+
+    app.setStyleSheet(purple_hacker_style)
     win.field_label.setObjectName("FieldLabel")
     win.robot_label.setObjectName("RobotLabel")
 
