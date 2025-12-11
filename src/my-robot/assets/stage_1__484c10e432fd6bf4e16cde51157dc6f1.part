@@ -1,0 +1,14 @@
+{
+    "configuration": "A_Frame_Base=0.6096+meter;A_Frame_Height=0.40640000000000004+meter;A_Frame_Mount_Offset=0.1524+meter;A_Frame_Mount_X_Offset=0.0+meter;Climb_hook_=true;Climb_rod_diameter=0.03175+meter;Climb_rod_wrap=2.356194490192345+radian;Distance_Between_Stage_Bottoms=0.025400000000000002+meter;Distance_Between_Stage_Sides=0.0047625+meter;Final_Stage_Width=0.025400000000000002+meter;List_k09sHTYWQbbiBr=_2;Max_Height=0.7620000000000001+meter;Pink_Arm_A_Frame_=false;Stage_Overlap=0.10160000000000001+meter;Thickness=0.0015875000000000002+meter",
+    "documentId": "ef3bb540b5d3c4a0e85b4adc",
+    "documentMicroversion": "d9ff28d305fee15f4e919fab",
+    "documentVersion": "47f600237e10713d80bfbf08",
+    "elementId": "3f5456ce64ffa5080a5b32d1",
+    "fullConfiguration": "A_Frame_Base=0.6096+meter;A_Frame_Height=0.40640000000000004+meter;A_Frame_Mount_Offset=0.1524+meter;A_Frame_Mount_X_Offset=0.0+meter;Climb_hook_=true;Climb_rod_diameter=0.03175+meter;Climb_rod_wrap=2.356194490192345+radian;Distance_Between_Stage_Bottoms=0.025400000000000002+meter;Distance_Between_Stage_Sides=0.0047625+meter;Final_Stage_Width=0.025400000000000002+meter;List_k09sHTYWQbbiBr=_2;Max_Height=0.7620000000000001+meter;Pink_Arm_A_Frame_=false;Stage_Overlap=0.10160000000000001+meter;Thickness=0.0015875000000000002+meter",
+    "id": "M0CWpKeaery2WOOQw",
+    "isStandardContent": false,
+    "name": "Stage 1 <1>",
+    "partId": "JSD",
+    "suppressed": false,
+    "type": "Part"
+}
